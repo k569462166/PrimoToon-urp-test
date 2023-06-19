@@ -24,6 +24,7 @@ Shader "Custom/mytest"
         [Gamma] _HitColor ("Fresnel Color", Color) = (0.0, 0.0, 0.0, 1.0)
         [Gamma] [HideInInspector] _ElementRimColor ("Element Rim Color", Color) = (0.0, 0.0, 0.0, 1.0)
         _HitColorScaler ("Fresnel Color Scaler", Float) = 6
+        
         _HitColorFresnelPower ("Fresnel Power", Float) = 1.5
 
         [Header(Face Shader Specific Settings)] [Space(10)] [Toggle] _UseFaceMapNew ("Use Face Shader?", Range(0.0, 1.0)) = 0.0

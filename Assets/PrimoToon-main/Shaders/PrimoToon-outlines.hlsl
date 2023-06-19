@@ -1,7 +1,7 @@
 // vertex
 vsOut vert(vsIn v){
     vsOut o;
-    //o.pos = UnityObjectToClipPos(v.vertex);
+    //o.pos = TransformObjectToHClip(v.vertex);
     o.vertexWS = mul(UNITY_MATRIX_M, v.vertex); // TransformObjectToWorld, v0
     o.vertexOS = v.vertex;
     o.uv.xy = v.uv0;
@@ -145,7 +145,7 @@ vsOut vert(vsIn v){
         u_xlat2 = UNITY_MATRIX_P[2] * u_xlat0.zzzz + u_xlat2;
         u_xlat1 = UNITY_MATRIX_P[3] * u_xlat1.xxxx + u_xlat2;
         
-        o.pos = UnityObjectToClipPos(u_xlat1);
+        o.pos = TransformObjectToHClip(u_xlat1);
     }*/
 
 
@@ -182,7 +182,7 @@ vsOut vert(vsIn v){
             calcOutline += v.vertex;
 
             // finally, convert calcOutlines to clip space
-            o.pos = UnityObjectToClipPos(calcOutline);
+            o.pos = TransformObjectToHClip(calcOutline);
         }
         else{
             // calculations that help the outlines scale consistently even with vastly different FOVs
@@ -253,6 +253,8 @@ vsOut vert(vsIn v){
             // convert to clip space
             vViewPosition = mul(UNITY_MATRIX_MVP, vViewPosition);
 
+
+
             // output into clip space
             o.pos = vViewPosition;
         }
@@ -261,7 +263,7 @@ vsOut vert(vsIn v){
         o.pos = vector<float, 4>(0, 0, 0, 0);
     }
 
-    UNITY_TRANSFER_FOG(o, o.pos);
+    o.fogCoord = ComputeFogFactor(o.pos.z);
 
     return o;
 }

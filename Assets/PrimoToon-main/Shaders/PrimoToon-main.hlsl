@@ -1,7 +1,7 @@
 // vertex
 vsOut vert(vsIn v){
     vsOut o;
-    o.pos = UnityObjectToClipPos(v.vertex);
+    o.pos = TransformObjectToHClip(v.vertex);
     o.vertexWS = mul(UNITY_MATRIX_M, v.vertex); // TransformObjectToWorld
     o.vertexOS = v.vertex;
     o.tangent = v.tangent;
@@ -11,7 +11,9 @@ vsOut vert(vsIn v){
     o.screenPos = ComputeScreenPos(o.pos);
     o.vertexcol = (_VertexColorLinear != 0.0) ? VertexColorConvertToLinear(v.vertexcol) : v.vertexcol;
 
-    UNITY_TRANSFER_FOG(o, o.pos);
+    o.fogCoord = ComputeFogFactor(o.pos.z);
+
+
 
     return o;
 }
@@ -25,8 +27,8 @@ vector<half, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     const vector<half, 3> viewDir = normalize(_WorldSpaceCameraPos.xyz - i.vertexWS);
     // get light direction
     const vector<half, 4> lightDir = getlightDir();
-    const vector<half, 3> rawNormalsWS = (frontFacing != 0) ? UnityObjectToWorldNormal(i.normal) : 
-                                                              -UnityObjectToWorldNormal(i.normal);
+    const vector<half, 3> rawNormalsWS = (frontFacing != 0) ? TransformObjectToWorldNormal(i.normal) : 
+                                                              -TransformObjectToWorldNormal(i.normal);
 
 
     /* TEXTURE CREATION */
@@ -75,8 +77,8 @@ vector<half, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
         /* FACE CALCULATION */
 
         // get head directions
-        headForward = normalize(UnityObjectToWorldDir(_headForwardVector.xyz));
-        headRight = normalize(UnityObjectToWorldDir(_headRightVector.xyz));
+        headForward = normalize(TransformObjectToWorldDir(_headForwardVector.xyz));
+        headRight = normalize(TransformObjectToWorldDir(_headRightVector.xyz));
 
         // get dot products of each head direction and the lightDir
         half FdotL = dot(normalize(lightDir.xz), headForward.xz);
@@ -244,7 +246,7 @@ vector<half, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
         NdotL = NdotL * 0.5 + 0.5;
 
         // NdotH, for some reason they don't remap ranges for the specular
-        vector<half, 3> halfVector = normalize(viewDir + _WorldSpaceLightPos0);
+        vector<half, 3> halfVector = normalize(viewDir + _MainLightPosition);
         half NdotH = dot(finalNormalsWS, halfVector);
 
         /* END OF DOT CREATION */
@@ -668,7 +670,7 @@ vector<half, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
     finalColor.xyz = (_RimLightType != 0) ? ColorDodge(rimLight, finalColor.xyz) : finalColor.xyz + rimLight;
 
     // apply fog
-    UNITY_APPLY_FOG(i.fogCoord, finalColor);
+    finalColor.xyz = MixFog(finalColor.xyz ,i.fogCoord);
     
     /* END OF COLOR CREATION */
 
