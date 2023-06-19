@@ -29,14 +29,14 @@ vector<float, 4> frag (v2f i) : SV_Target{
     UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
 
     // sample textures to objects
-    vector<fixed, 4> mainTex = _MainTex.Sample(sampler_MainTex, vector<half, 2>(i.uv.xy));
+    vector<half, 4> mainTex = _MainTex.Sample(sampler_MainTex, vector<half, 2>(i.uv.xy));
 
     /* WEAPON */
 
     if(_UseWeapon != 0.0){
         vector<half, 2> weaponUVs = (_ProceduralUVs != 0.0) ? (i.vertexOS.zx + 0.25) * 1.5 : i.uv.zw;
 
-        vector<fixed, 3> dissolve = 0.0;
+        vector<half, 3> dissolve = 0.0;
 
         /* DISSOLVE */
 

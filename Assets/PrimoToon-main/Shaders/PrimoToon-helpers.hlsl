@@ -2,7 +2,7 @@
 
 // light fallback
 vector<half, 4> getlightDir(){
-    vector<half, 4> lightDir = (_WorldSpaceLightPos0 != 0) ? _WorldSpaceLightPos0 :
+    vector<half, 4> lightDir = (_MainLightPosition != 0) ? _MainLightPosition :
                                vector<half, 4>(0, 0, 0, 0) + vector<half, 4>(1, 1, 0, 0);
     return lightDir;
 }
@@ -21,8 +21,16 @@ float lerpByZ(const float startScale, const float endScale, const float startZ, 
 }
 
 // environment lighting function
-vector<fixed, 4> calculateEnvLighting(vector<float, 3> vertexWSInput){
+vector<half, 4> calculateEnvLighting(vector<float, 3> vertexWSInput){
     // get all the point light positions
+    
+    float3 positionWS = TransformObjectToWorld(vertexWSInput);
+
+    vector<half, 3> l1 = GetAdditionalLight(0, positionWS, half4(1,1,1,1));
+    vector<half, 3> l2 = GetAdditionalLight(1, positionWS, half4(1,1,1,1));
+    vector<half, 3> l3 = GetAdditionalLight(2, positionWS, half4(1,1,1,1));
+    vector<half, 3> l4 = GetAdditionalLight(3, positionWS, half4(1,1,1,1));
+
     vector<half, 3> firstPointLightPos = { unity_4LightPosX0.x, unity_4LightPosY0.x, unity_4LightPosZ0.x };
     vector<half, 3> secondPointLightPos = { unity_4LightPosX0.y, unity_4LightPosY0.y, unity_4LightPosZ0.y };
     vector<half, 3> thirdPointLightPos = { unity_4LightPosX0.z, unity_4LightPosY0.z, unity_4LightPosZ0.z };
@@ -54,12 +62,12 @@ vector<fixed, 4> calculateEnvLighting(vector<float, 3> vertexWSInput){
     pointLightCalc = max(pointLightCalc, fourthPointLight);
 
     // get the color of whichever's greater between the light direction and the strongest nearby point light
-    vector<fixed, 4> environmentLighting = max(_LightColor0, vector<fixed, 4>(pointLightCalc, 1));
+    vector<half, 4> environmentLighting = max(_MainLightColor, vector<half, 4>(pointLightCalc, 1));
     // now get whichever's greater than the result of the first and the nearest light probe
     vector<half, 3> ShadeSH9Alternative = vector<half, 3>(unity_SHAr.w, unity_SHAg.w, unity_SHAb.w) + 
                                           vector<half, 3>(unity_SHBr.z, unity_SHBg.z, unity_SHBb.z) / 3.0;
-    //environmentLighting = max(environmentLighting, vector<fixed, 4>(ShadeSH9(vector<half, 4>(0, 0, 0, 1)), 1));
-    environmentLighting = max(environmentLighting, vector<fixed, 4>(ShadeSH9Alternative, 1));
+    //environmentLighting = max(environmentLighting, vector<half, 4>(ShadeSH9(vector<half, 4>(0, 0, 0, 1)), 1));
+    environmentLighting = max(environmentLighting, vector<half, 4>(ShadeSH9Alternative, 1));
 
     return environmentLighting;
 }
@@ -75,18 +83,17 @@ vector<half, 4> calculateRimLight(const vector<float, 3> normalInput, const vect
     // https://github.com/TwoTailsGames/Unity-Built-in-Shaders/blob/master/CGIncludes/UnityDeferredLibrary.cginc#L152
     vector<half, 2> screenPos = screenPosInput.xy / screenPosInput.w;
 
-    // sample depth texture and get it in linear form untouched
-    half linearDepth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, screenPos);
-    linearDepth = LinearEyeDepth(linearDepth);
 
+float linearDepth = SAMPLE_TEXTURE2D_X(_CameraDepthTexture, sampler_CameraDepthTexture, screenPos).r;
+ linearDepth = Linear01Depth(linearDepth, _ZBufferParams);
     // now we modify screenPos to offset another sampled depth texture
     screenPos = screenPos + (rimNormals.x * (0.00125 * max(_ScreenParams.x * 
                 0.00025, 1) + ((RimLightThicknessInput - 1) * 0.001)));
     screenPos = screenPos + rimNormals.y * 0.001;
 
-    // sample depth texture again to another object with modified screenPos
-    half rimDepth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, screenPos);
-    rimDepth = LinearEyeDepth(rimDepth);
+
+float rimDepth = SAMPLE_TEXTURE2D_X(_CameraDepthTexture, sampler_CameraDepthTexture, screenPos).r;
+ rimDepth = Linear01Depth(linearDepth, _ZBufferParams);
 
     // now compare the two
     half depthDiff = rimDepth - linearDepth;
@@ -103,12 +110,12 @@ vector<half, 4> calculateRimLight(const vector<float, 3> normalInput, const vect
 /* https://github.com/penandlim/JL-s-Unity-Blend-Modes/blob/master/John%20Lim's%20Blend%20Modes/CGIncludes/PhotoshopBlendModes.cginc */
 
 // color dodge blend mode
-vector<fixed, 3> ColorDodge(const vector<fixed, 3> s, const vector<fixed, 3> d){
+vector<half, 3> ColorDodge(const vector<half, 3> s, const vector<half, 3> d){
     return d / (1.0 - min(s, 0.999));
 }
 
-vector<fixed, 4> ColorDodge(const vector<fixed, 4> s, const vector<fixed, 4> d){
-    return vector<fixed, 4>(d.xyz / (1.0 - min(s.xyz, 0.999)), d.w);
+vector<half, 4> ColorDodge(const vector<half, 4> s, const vector<half, 4> d){
+    return vector<half, 4>(d.xyz / (1.0 - min(s.xyz, 0.999)), d.w);
 }
 
 // https://github.com/cnlohr/shadertrixx/blob/main/README.md#detecting-if-you-are-on-desktop-vr-camera-etc
@@ -150,7 +157,7 @@ void calculateDissolve(out vector<float, 3> input, vector<float, 2> uvs, float f
     buf = _WeaponDissolveValue * 2.1 + buf;
     vector<float, 2> dissolveUVs = vector<float, 2>(uvs.x, buf - 1.0); // tmp1.xy
 
-    vector<fixed, 4> dissolveTex = _WeaponDissolveTex.Sample(sampler_WeaponDissolveTex, dissolveUVs);
+    vector<half, 4> dissolveTex = _WeaponDissolveTex.Sample(sampler_WeaponDissolveTex, dissolveUVs);
     buf = dissolveTex * 3.0 * factor;
     buf = buf * 0.5 + dissolveTex.x;
 
