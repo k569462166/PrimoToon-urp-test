@@ -1,7 +1,5 @@
-Shader "Custom/mytest"
-{
-    Properties
-    {
+﻿Shader ".festivity/PrimoToon/PrimoToon"{
+    Properties{
         [Header(Textures)] [MainTex] [NoScaleOffset] [HDR] [Space(10)] _MainTex ("Diffuse", 2D) = "white"{}
         [NoScaleOffset] _LightMapTex ("Lightmap", 2D) = "white"{}
         [NoScaleOffset] _FaceMap ("Face Shadow (only if face shader is used)", 2D) = "white"{}
@@ -24,7 +22,6 @@ Shader "Custom/mytest"
         [Gamma] _HitColor ("Fresnel Color", Color) = (0.0, 0.0, 0.0, 1.0)
         [Gamma] [HideInInspector] _ElementRimColor ("Element Rim Color", Color) = (0.0, 0.0, 0.0, 1.0)
         _HitColorScaler ("Fresnel Color Scaler", Float) = 6
-        
         _HitColorFresnelPower ("Fresnel Power", Float) = 1.5
 
         [Header(Face Shader Specific Settings)] [Space(10)] [Toggle] _UseFaceMapNew ("Use Face Shader?", Range(0.0, 1.0)) = 0.0
@@ -193,97 +190,22 @@ Shader "Custom/mytest"
         //[Enum(Thry.BlendOp)]_AddBlendOpAlpha ("Alpha Blend Op", Int) = 0
         //[Enum(UnityEngine.Rendering.BlendMode)] _AddSrcBlend ("Source Blend", Int) = 1
         //[Enum(UnityEngine.Rendering.BlendMode)] _AddDstBlend ("Destination Blend", Int) = 1
-
-        [MainTexture] _BaseMap("Texture", 2D) = "white" {}
-        [MainColor] _BaseColor("Color", Color) = (1, 1, 1, 1)
-        _Cutoff("AlphaCutout", Range(0.0, 1.0)) = 0.5
-
-        // BlendMode
-        _Surface("__surface", Float) = 0.0
-        _Blend("__mode", Float) = 0.0
-        _Cull("__cull", Float) = 2.0
-        [ToggleUI] _AlphaClip("__clip", Float) = 0.0
-        [HideInInspector] _BlendOp("__blendop", Float) = 0.0
-        [HideInInspector] _SrcBlend("__src", Float) = 1.0
-        [HideInInspector] _DstBlend("__dst", Float) = 0.0
-        [HideInInspector] _ZWrite("__zw", Float) = 1.0
-
-        // Editmode props
-        _QueueOffset("Queue offset", Float) = 0.0
-
-        // ObsoleteProperties
     }
-    
-    // SubShader
-    // {
-    //     Tags { "RenderType"="Opaque" "RenderPipeline" = "UniversalPipeline" "LightMode" = "UniversalForward"}
-    //     LOD 200
-
-    //     Blend [_SrcBlend][_DstBlend]
-    //     ZWrite [_ZWrite]
-    //     Cull [_Cull]
-
-    //     Pass
-    //     {
-    //         Name "Unlit"
-
-    //         HLSLPROGRAM
-    //         #pragma exclude_renderers gles gles3 glcore
-    //         #pragma target 4.5
-
-    //         #pragma shader_feature_local_fragment _SURFACE_TYPE_TRANSPARENT
-    //         #pragma shader_feature_local_fragment _ALPHATEST_ON
-    //         #pragma shader_feature_local_fragment _ALPHAPREMULTIPLY_ON
-
-    //         // -------------------------------------
-    //         // Unity defined keywords
-    //         #pragma multi_compile_fog
-    //         #pragma multi_compile_instancing
-    //         #pragma multi_compile _ DOTS_INSTANCING_ON
-    //         #pragma multi_compile_fragment _ _SCREEN_SPACE_OCCLUSION
-    //         #pragma multi_compile_fragment _ _DBUFFER_MRT1 _DBUFFER_MRT2 _DBUFFER_MRT3
-    //         #pragma multi_compile _ DEBUG_DISPLAY
-
-    //         #pragma vertex UnlitPassVertex
-    //         #pragma fragment UnlitPassFragment
-
-    //         #include "Packages/com.unity.render-pipelines.universal/Shaders/UnlitInput.hlsl"
-    //         #include "Packages/com.unity.render-pipelines.universal/Shaders/UnlitForwardPass.hlsl"
-    //         ENDHLSL
-    //     }
-    // }
-
-    
     SubShader{
-     Tags { "RenderType"="Opaque" "RenderPipeline" = "UniversalPipeline" "LightMode" = "UniversalForward"}
+        Tags{ "RenderPipeline"="UniversalPipeline" "RenderType"="Opaque" "Queue"="Geometry" }
 
         ZWrite [_ZWrite]
 
-        HLSLINCLUDE
+        HLSLINCLUDE 
 
         #pragma vertex vert
-
         #pragma fragment frag
 
-        #pragma exclude_renderers gles gles3 glcore
-        #pragma target 4.5
-
-        #pragma shader_feature_local_fragment _SURFACE_TYPE_TRANSPARENT
-        #pragma shader_feature_local_fragment _ALPHATEST_ON
-        #pragma shader_feature_local_fragment _ALPHAPREMULTIPLY_ON
-
-        // -------------------------------------
-        // Unity defined keywords
+        #pragma multi_compile _ UNITY_HDR_ON
         #pragma multi_compile_fog
-        #pragma multi_compile_instancing
-        #pragma multi_compile _ DOTS_INSTANCING_ON
-        #pragma multi_compile_fragment _ _SCREEN_SPACE_OCCLUSION
-        #pragma multi_compile_fragment _ _DBUFFER_MRT1 _DBUFFER_MRT2 _DBUFFER_MRT3
-        #pragma multi_compile _ DEBUG_DISPLAY
-        
-#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Input.hlsl"
-#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+
+        #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+
         #include "PrimoToon-inputs.hlsli"
 
 
@@ -303,8 +225,8 @@ Shader "Custom/mytest"
         Texture2D _CustomEmissionTex;       SamplerState sampler_CustomEmissionTex;
         Texture2D _CustomEmissionAOTex;     SamplerState sampler_CustomEmissionAOTex;
 
-TEXTURE2D_X_FLOAT(_CameraDepthTexture);
-SAMPLER(sampler_CameraDepthTexture);
+        TEXTURE2D_X_FLOAT(_CameraDepthTexture);
+        SAMPLER(sampler_CameraDepthTexture);
 
         float _DayOrNight;
         float _EnvironmentLightingStrength;
@@ -466,15 +388,15 @@ SAMPLER(sampler_CameraDepthTexture);
 
         /* end of properties */
 
-
+        #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
         #include "PrimoToon-helpers.hlsl"
 
-        ENDHLSL
+        ENDHLSL  
 
         Pass{
             Name "ForwardBase"
 
-            Tags{ "LightMode" = "ForwardBase" }
+            Tags{ "LightMode" = "UniversalForward" }
 
             Cull [_Cull]
 
@@ -482,12 +404,11 @@ SAMPLER(sampler_CameraDepthTexture);
 
             HLSLPROGRAM
 
+            #pragma multi_compile_fwdbase
+
             #include "PrimoToon-main.hlsl"
 
             ENDHLSL
         }
     }
-
-
-    FallBack "Hidden/Universal Render Pipeline/FallbackError"
 }

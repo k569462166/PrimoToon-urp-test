@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Avatar_Boy_Pole_Mika_Mat_Hair
-  m_Shader: {fileID: 4800000, guid: d4144fdba47e5d34383b0d353171a270, type: 3}
+  m_Shader: {fileID: 4800000, guid: a80869b834a02fd4b87cca2b029d20c9, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords:
   - _CLIPPLANEWORLD_ON

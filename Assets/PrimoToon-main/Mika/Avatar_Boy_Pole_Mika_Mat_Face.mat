@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Avatar_Boy_Pole_Mika_Mat_Face
-  m_Shader: {fileID: 4800000, guid: d4144fdba47e5d34383b0d353171a270, type: 3}
+  m_Shader: {fileID: 4800000, guid: a80869b834a02fd4b87cca2b029d20c9, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords:
   - _CLIPPLANEWORLD_ON
@@ -33,6 +33,10 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _BaseMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _BumpMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -111,6 +115,9 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _AlphaClip: 0
+    - _Blend: 0
+    - _BlendOp: 0
     - _BumpScale: 1
     - _ClipAlphaThreshold: 1
     - _ClipPlaneWorld: 1
@@ -157,6 +164,7 @@ Material:
     - _PulseMaxStrength: 1
     - _PulseMinStrength: 0
     - _PulseSpeed: 1
+    - _QueueOffset: 0
     - _ReturnDiffuseA: 0
     - _ReturnDiffuseRGB: 0
     - _ReturnEmissionFactor: 0
@@ -211,6 +219,7 @@ Material:
     - _SpecMulti5: 0.1
     - _SpecularHighlights: 1
     - _SrcBlend: 1
+    - _Surface: 0
     - _TextureBiasWhenDithering: -1
     - _TextureLineSmoothness: 0.1
     - _TextureLineThickness: 0.6
@@ -237,6 +246,7 @@ Material:
     - _ZWrite: 1
     - _flipFaceLighting: 0
     m_Colors:
+    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _ClipPlane: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _CoolShadowMultColor: {r: 0.8602941, g: 0.7086956, b: 0.70215183, a: 1}
