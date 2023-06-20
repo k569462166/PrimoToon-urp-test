@@ -13,7 +13,6 @@ Material:
   m_InvalidKeywords:
   - _CLIPPLANEWORLD_ON
   - _EMISSIONTYPE_DEFAULT
-  - _FALLBACKOUTLINES_ON
   - _METALMATERIAL_ON
   - _NORMALMAP
   - _OUTLINETYPE_NORMAL
@@ -126,9 +125,9 @@ Material:
     - _EmissionType: 0
     - _EnvironmentLightingStrength: 1
     - _EyeGlowStrength: 4.38
-    - _FaceBlushStrength: 0.669
-    - _FaceMapSoftness: 0.001
-    - _FallbackOutlines: 1
+    - _FaceBlushStrength: 0.907
+    - _FaceMapSoftness: 0.612
+    - _FallbackOutlines: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.070710674
     - _GlossyReflections: 1
@@ -149,10 +148,10 @@ Material:
     - _MetalMaterial: 1
     - _Metallic: 0
     - _Mode: 0
-    - _NoseBlushStrength: 0
+    - _NoseBlushStrength: 0.74
     - _OcclusionStrength: 1
     - _OutlineType: 1
-    - _OutlineWidth: 0.03
+    - _OutlineWidth: 96.4
     - _Parallax: 0.02
     - _Pattern_Speed: -0.033
     - _ProceduralUVs: 0
@@ -180,15 +179,15 @@ Material:
     - _ReturnVertexColorB: 0
     - _ReturnVertexColorG: 0
     - _ReturnVertexColorR: 0
-    - _RimLightIntensity: 2
-    - _RimLightThickness: 8.04
+    - _RimLightIntensity: 60
+    - _RimLightThickness: 6.23
     - _RimLightType: 0
-    - _Scale: 0.01
+    - _Scale: 4
     - _ScanColorScaler: 0
     - _ScanDirection_Switch: 0
     - _ScanSpeed: 0.8
     - _ShadowRampWidth: 1
-    - _ShadowTransitionRange: 0.01
+    - _ShadowTransitionRange: 0.392
     - _ShadowTransitionRange2: 0.01
     - _ShadowTransitionRange3: 0.01
     - _ShadowTransitionRange4: 0.01
@@ -214,8 +213,8 @@ Material:
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _TextureBiasWhenDithering: -1
-    - _TextureLineSmoothness: 0.1
-    - _TextureLineThickness: 0.6
+    - _TextureLineSmoothness: 0.785
+    - _TextureLineThickness: 0.94
     - _TextureLineUse: 0
     - _ToggleEyeGlow: 1
     - _TogglePulse: 0
@@ -260,7 +259,7 @@ Material:
     - _MTShadowMultiColor: {r: 0.6877163, g: 0.6997315, b: 0.7794118, a: 0.8}
     - _MTSharpLayerColor: {r: 1, g: 1, b: 1, a: 1}
     - _MTSpecularColor: {r: 1, g: 0.95588225, b: 0.8897059, a: 1}
-    - _NoseBlushColor: {r: 1, g: 0.8, b: 0.7, a: 1}
+    - _NoseBlushColor: {r: 0.3223859, g: 1, b: 0, a: 1}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _OutlineColor2: {r: 0.1544118, g: 0.015973637, b: 0, a: 1}
     - _OutlineColor3: {r: 0.34558818, g: 0.18549952, b: 0.18549952, a: 1}

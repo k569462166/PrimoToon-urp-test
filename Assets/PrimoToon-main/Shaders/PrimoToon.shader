@@ -410,5 +410,37 @@
 
             ENDHLSL
         }
+        // Pass{
+        //     Name "OutlinePass"
+            
+        //     Tags{ "LightMode" = "UniversalForward" }
+
+        //     Cull Front
+
+        //     Blend [_SrcBlend] [_DstBlend]
+
+        //     HLSLPROGRAM
+
+        //     #pragma multi_compile_fwdbase
+
+        //     #include "PrimoToon-outlines.hlsl"
+
+        //     ENDHLSL
+        // }
+        Pass{
+            Name "ShadowCaster"
+
+            Tags{ "LightMode" = "ShadowCaster" }
+            
+            HLSLPROGRAM
+
+            #pragma multi_compile_instancing
+		    #pragma multi_compile_shadowcaster
+
+            // template by mochie bestie: https://github.com/cnlohr/shadertrixx/blob/main/README.md#shadowcasting
+            #include "PrimoToon-shadows.hlsl"
+
+            ENDHLSL
+        }
     }
 }
