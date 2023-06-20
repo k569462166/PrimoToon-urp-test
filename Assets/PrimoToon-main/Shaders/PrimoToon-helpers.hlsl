@@ -88,18 +88,19 @@ vector<half, 4> calculateRimLight(const vector<float, 3> normalInput, const vect
     // https://github.com/TwoTailsGames/Unity-Built-in-Shaders/blob/master/CGIncludes/UnityDeferredLibrary.cginc#L152
     vector<half, 2> screenPos = screenPosInput.xy / screenPosInput.w;
 
+ 
+float linearDepth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, sampler_CameraDepthTexture, screenPos).r;
+ linearDepth = LinearEyeDepth(linearDepth, _ZBufferParams);
 
-float linearDepth = SAMPLE_TEXTURE2D_X(_CameraDepthTexture, sampler_CameraDepthTexture, screenPos).r;
- linearDepth = Linear01Depth(linearDepth, _ZBufferParams);
     // now we modify screenPos to offset another sampled depth texture
     screenPos = screenPos + (rimNormals.x * (0.00125 * max(_ScreenParams.x * 
                 0.00025, 1) + ((RimLightThicknessInput - 1) * 0.001)));
     screenPos = screenPos + rimNormals.y * 0.001;
 
 
-float rimDepth = SAMPLE_TEXTURE2D_X(_CameraDepthTexture, sampler_CameraDepthTexture, screenPos).r;
- rimDepth = Linear01Depth(linearDepth, _ZBufferParams);
-
+float rimDepth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, sampler_CameraDepthTexture, screenPos).r;
+ rimDepth = LinearEyeDepth(rimDepth, _ZBufferParams);
+ 
     // now compare the two
     half depthDiff = rimDepth - linearDepth;
 

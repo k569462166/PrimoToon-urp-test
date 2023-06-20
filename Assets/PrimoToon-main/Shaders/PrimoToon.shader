@@ -224,9 +224,8 @@
 
         Texture2D _CustomEmissionTex;       SamplerState sampler_CustomEmissionTex;
         Texture2D _CustomEmissionAOTex;     SamplerState sampler_CustomEmissionAOTex;
-
-        TEXTURE2D_X_FLOAT(_CameraDepthTexture);
-        SAMPLER(sampler_CameraDepthTexture);
+        
+TEXTURE2D(_CameraDepthTexture); SAMPLER(sampler_CameraDepthTexture);
 
         float _DayOrNight;
         float _EnvironmentLightingStrength;

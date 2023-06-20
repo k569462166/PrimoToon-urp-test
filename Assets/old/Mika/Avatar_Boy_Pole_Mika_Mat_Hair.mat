@@ -17,6 +17,7 @@ Material:
   - _METALMATERIAL_ON
   - _NORMALMAP
   - _OUTLINETYPE_NORMAL
+  - _RETURNRIMLIGHT_ON
   - _RIMLIGHTTYPE_ADD
   - _TOGGLEEYEGLOW_ON
   - _USELIGHTMAPCOLORAO_ON
@@ -173,7 +174,7 @@ Material:
     - _ReturnNormals: 0
     - _ReturnRawNormals: 0
     - _ReturnRightVector: 0
-    - _ReturnRimLight: 0
+    - _ReturnRimLight: 1
     - _ReturnTangents: 0
     - _ReturnTextureLineMap: 0
     - _ReturnVertexColorA: 0

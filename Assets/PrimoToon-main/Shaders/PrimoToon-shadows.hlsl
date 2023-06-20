@@ -21,7 +21,7 @@ v2f vert (appdata v){
     o.vertexOS = v.vertex;
     UNITY_SETUP_INSTANCE_ID(v);
     UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
-    TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
+    // TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
     return o;
 }
 

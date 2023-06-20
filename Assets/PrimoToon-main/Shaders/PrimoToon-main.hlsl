@@ -677,6 +677,8 @@ vector<half, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
 
     /* DEBUGGING */
 
+
+    
     if(_ReturnDiffuseRGB != 0){ return vector<half, 4>(mainTex.xyz, 1.0); }
     if(_ReturnDiffuseA != 0){ return vector<half, 4>(mainTex.www, 1.0); }
     if(_ReturnLightmapR != 0){ return vector<half, 4>(lightmapTex.xxx, 1.0); }
