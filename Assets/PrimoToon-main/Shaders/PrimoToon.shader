@@ -3,7 +3,7 @@
         [Header(Textures)] [MainTex] [NoScaleOffset] [HDR] [Space(10)] _MainTex ("Diffuse", 2D) = "white"{}
         [NoScaleOffset] _LightMapTex ("Lightmap", 2D) = "white"{}
         [NoScaleOffset] _FaceMap ("Face Shadow (only if face shader is used)", 2D) = "white"{}
-        [NoScaleOffset] _BumpMap ("Bump Map", 2D) = "bump"{}
+        // [NoScaleOffset] _BumpMap ("Bump Map", 2D) = "bump"{}
         [NoScaleOffset] [HDR] _PackedShadowRampTex ("Shadow Ramp", 2D) = "white"{}
         [NoScaleOffset] _MTSpecularRamp ("Specular Ramp", 2D) = "white"{}
         [NoScaleOffset] [HDR] _MTMap ("Metallic Matcap", 2D) = "white"{}
@@ -198,9 +198,6 @@
 
         HLSLINCLUDE 
 
-        #pragma vertex vert
-        #pragma fragment frag
-
         #pragma multi_compile _ UNITY_HDR_ON
         #pragma multi_compile_fog
 
@@ -214,7 +211,8 @@
         Texture2D _MainTex;                 SamplerState sampler_MainTex;                 const vector<float, 4> _MainTex_TexelSize;
         Texture2D _LightMapTex;             SamplerState sampler_LightMapTex;             const vector<float, 4> _LightMapTex_TexelSize;
         Texture2D _FaceMap;                 SamplerState sampler_FaceMap;                 const vector<float, 4> _FaceMap_TexelSize;
-        Texture2D _BumpMap;                 SamplerState sampler_BumpMap;                 const vector<float, 4> _BumpMap_TexelSize;
+        // Texture2D _BumpMap;                 SamplerState sampler_BumpMap;                 
+        const vector<float, 4> _BumpMap_TexelSize;
         Texture2D _PackedShadowRampTex;     SamplerState sampler_PackedShadowRampTex;
         Texture2D _MTSpecularRamp;          SamplerState sampler_MTSpecularRamp;
         Texture2D _MTMap;                   SamplerState sampler_MTMap;
@@ -225,7 +223,7 @@
         Texture2D _CustomEmissionTex;       SamplerState sampler_CustomEmissionTex;
         Texture2D _CustomEmissionAOTex;     SamplerState sampler_CustomEmissionAOTex;
         
-TEXTURE2D(_CameraDepthTexture); SAMPLER(sampler_CameraDepthTexture);
+        TEXTURE2D(_CameraDepthTexture); SAMPLER(sampler_CameraDepthTexture);
 
         float _DayOrNight;
         float _EnvironmentLightingStrength;
@@ -271,7 +269,7 @@ TEXTURE2D(_CameraDepthTexture); SAMPLER(sampler_CameraDepthTexture);
 
         float _ToggleEyeGlow;
         float _EmissionType;
-        vector<float, 4> _EmissionColor;
+         // vector<float, 4> _EmissionColor;
         float _EyeGlowStrength;
         float _EmissionStrength;
         float _TogglePulse;
@@ -281,7 +279,7 @@ TEXTURE2D(_CameraDepthTexture); SAMPLER(sampler_CameraDepthTexture);
 
         float _MainTexAlphaCutoff;
 
-        float _BumpScale;
+         // float _BumpScale;
         float _LightArea;
         float _ShadowRampWidth;
         float _ShadowTransitionRange;
@@ -387,9 +385,6 @@ TEXTURE2D(_CameraDepthTexture); SAMPLER(sampler_CameraDepthTexture);
 
         /* end of properties */
 
-        #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
-        #include "PrimoToon-helpers.hlsl"
-
         ENDHLSL  
 
         Pass{
@@ -403,42 +398,161 @@ TEXTURE2D(_CameraDepthTexture); SAMPLER(sampler_CameraDepthTexture);
 
             HLSLPROGRAM
 
+        #pragma vertex vert
+        #pragma fragment frag
+
+
             #pragma multi_compile_fwdbase
+
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
+            #include "PrimoToon-helpers.hlsl"
 
             #include "PrimoToon-main.hlsl"
 
             ENDHLSL
         }
-        // Pass{
-        //     Name "OutlinePass"
+        
+        Pass{
+            Name "OutlinePass"
             
-        //     Tags{ "LightMode" = "UniversalForward" }
+            Tags{ "LightMode" = "SRPDefaultUnlit" }
 
-        //     Cull Front
+            Cull Front
 
-        //     Blend [_SrcBlend] [_DstBlend]
+            Blend [_SrcBlend] [_DstBlend]
 
+            HLSLPROGRAM
+
+        #pragma vertex vert
+        #pragma fragment frag
+
+            #pragma multi_compile_fwdbase
+
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
+            #include "PrimoToon-helpers.hlsl"
+            #include "PrimoToon-outlines.hlsl"
+
+            ENDHLSL
+        }       
+        
+        Pass
+        {
+            Name "ShadowCaster"
+            Tags{"LightMode" = "ShadowCaster"}
+
+            ZWrite On
+            ZTest LEqual
+            ColorMask 0
+            Cull[_Cull]
+
+            HLSLPROGRAM
+            #pragma exclude_renderers gles gles3 glcore
+            #pragma target 4.5
+
+            // -------------------------------------
+            // Material Keywords
+            #pragma shader_feature_local_fragment _ALPHATEST_ON
+            #pragma shader_feature_local_fragment _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+
+            //--------------------------------------
+            // GPU Instancing
+            #pragma multi_compile_instancing
+            #pragma multi_compile _ DOTS_INSTANCING_ON
+
+            // -------------------------------------
+            // Universal Pipeline keywords
+
+            // This is used during shadow map generation to differentiate between directional and punctual light shadows, as they use different formulas to apply Normal Bias
+            #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
+
+            #pragma vertex ShadowPassVertex
+            #pragma fragment ShadowPassFragment
+
+            #include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/Shaders/ShadowCasterPass.hlsl"
+            ENDHLSL
+        }
+
+        
+        // Pass{
+        //     Name "ShadowCaster"
+
+        //     Tags{ "LightMode" = "ShadowCaster" }
+            
         //     HLSLPROGRAM
 
-        //     #pragma multi_compile_fwdbase
+        //     #pragma multi_compile_instancing
+		//     #pragma multi_compile_shadowcaster
 
-        //     #include "PrimoToon-outlines.hlsl"
+        //     // template by mochie bestie: https://github.com/cnlohr/shadertrixx/blob/main/README.md#shadowcasting
+        //     #include "PrimoToon-shadows.hlsl"
 
         //     ENDHLSL
         // }
-        Pass{
-            Name "ShadowCaster"
+        
 
-            Tags{ "LightMode" = "ShadowCaster" }
-            
+        Pass
+        {
+            Name "DepthOnly"
+            Tags{"LightMode" = "DepthOnly"}
+
+            ZWrite On
+            ColorMask 0
+            Cull[_Cull]
+
             HLSLPROGRAM
+            #pragma only_renderers gles gles3 glcore d3d11
+            #pragma target 2.0
 
+            //--------------------------------------
+            // GPU Instancing
             #pragma multi_compile_instancing
-		    #pragma multi_compile_shadowcaster
 
-            // template by mochie bestie: https://github.com/cnlohr/shadertrixx/blob/main/README.md#shadowcasting
-            #include "PrimoToon-shadows.hlsl"
+            #pragma vertex DepthOnlyVertex
+            #pragma fragment DepthOnlyFragment
 
+            // -------------------------------------
+            // Material Keywords
+            #pragma shader_feature_local_fragment _ALPHATEST_ON
+            #pragma shader_feature_local_fragment _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+
+            #include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/Shaders/DepthOnlyPass.hlsl"
+            ENDHLSL
+        }
+
+        // This pass is used when drawing to a _CameraNormalsTexture texture
+        Pass
+        {
+            Name "DepthNormals"
+            Tags{"LightMode" = "DepthNormals"}
+
+            ZWrite On
+            Cull[_Cull]
+
+            HLSLPROGRAM
+            #pragma only_renderers gles gles3 glcore d3d11
+            #pragma target 2.0
+
+            #pragma vertex DepthNormalsVertex
+            #pragma fragment DepthNormalsFragment
+
+            // -------------------------------------
+            // Material Keywords
+            #pragma shader_feature_local _NORMALMAP
+            #pragma shader_feature_local _PARALLAXMAP
+            #pragma shader_feature_local _ _DETAIL_MULX2 _DETAIL_SCALED
+            #pragma shader_feature_local_fragment _ALPHATEST_ON
+            #pragma shader_feature_local_fragment _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+
+            //--------------------------------------
+            // GPU Instancing
+            #pragma multi_compile_instancing
+
+            #include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/Shaders/LitDepthNormalsPass.hlsl"
             ENDHLSL
         }
     }

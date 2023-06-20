@@ -153,7 +153,7 @@ vsOut vert(vsIn v){
     if(_OutlineType != 0){
         if(_FallbackOutlines != 0){
             // first, form the base outline thickness with vertexcol.w
-            vector<float, 3> calcOutline = o.vertexcol.w * (_OutlineWidth * 0.00000105);
+            vector<float, 3> calcOutline = o.vertexcol.w * (_OutlineWidth * 0.105);
             // get distance between camera and each vertex, ensure thickness does not go below base outline thickness
             float distOutline = max(distance(_WorldSpaceCameraPos, o.vertexWS), 1);
             // clamp distOutline so it doesn't go wild at very far distances
@@ -172,6 +172,7 @@ vsOut vert(vsIn v){
                 default:
                     break;
             }
+
 
             // get camera view direction
             vector<half, 3> viewDir = normalize(_WorldSpaceCameraPos - o.vertexWS);
@@ -372,7 +373,7 @@ vector<half, 4> frag(vsOut i, bool frontFacing : SV_IsFrontFace) : SV_Target{
 
     // apply fog
     // UNITY_APPLY_FOG(i.fogCoord, globalOutlineColor);
-
+    globalOutlineColor.xyz = MixFog(globalOutlineColor.xyz, i.fogCoord);
     //return vector<half, 4>(i.TtoW0, 1);
 
     /* END OF COLOR CREATION */

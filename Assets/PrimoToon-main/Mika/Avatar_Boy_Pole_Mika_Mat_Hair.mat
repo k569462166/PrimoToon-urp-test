@@ -9,12 +9,13 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: Avatar_Boy_Pole_Mika_Mat_Hair
   m_Shader: {fileID: 4800000, guid: a80869b834a02fd4b87cca2b029d20c9, type: 3}
-  m_ValidKeywords: []
+  m_ValidKeywords:
+  - _NORMALMAP
   m_InvalidKeywords:
   - _CLIPPLANEWORLD_ON
   - _EMISSIONTYPE_DEFAULT
+  - _FALLBACKOUTLINES_ON
   - _METALMATERIAL_ON
-  - _NORMALMAP
   - _OUTLINETYPE_NORMAL
   - _RIMLIGHTTYPE_ADD
   - _TOGGLEEYEGLOW_ON
@@ -127,7 +128,7 @@ Material:
     - _EyeGlowStrength: 4.38
     - _FaceBlushStrength: 0.907
     - _FaceMapSoftness: 0.612
-    - _FallbackOutlines: 0
+    - _FallbackOutlines: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.070710674
     - _GlossyReflections: 1
@@ -151,7 +152,7 @@ Material:
     - _NoseBlushStrength: 0.74
     - _OcclusionStrength: 1
     - _OutlineType: 1
-    - _OutlineWidth: 96.4
+    - _OutlineWidth: 0.03
     - _Parallax: 0.02
     - _Pattern_Speed: -0.033
     - _ProceduralUVs: 0
@@ -179,10 +180,10 @@ Material:
     - _ReturnVertexColorB: 0
     - _ReturnVertexColorG: 0
     - _ReturnVertexColorR: 0
-    - _RimLightIntensity: 60
-    - _RimLightThickness: 6.23
+    - _RimLightIntensity: 3
+    - _RimLightThickness: 3
     - _RimLightType: 0
-    - _Scale: 4
+    - _Scale: 0.01
     - _ScanColorScaler: 0
     - _ScanDirection_Switch: 0
     - _ScanSpeed: 0.8
